@@ -117,18 +117,21 @@ export default function Home() {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // ----- Chip interaction state -----
-  const [activeChip, setActiveChip] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("dozeeSettings");
-      if (saved) {
-        try {
-          const obj = JSON.parse(saved);
-          return obj.lastChip || null;
-        } catch {}
-      }
+  const [activeChip, setActiveChip] = useState<string | null>(null);
+
+  // Load saved active chip on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("dozeeSettings");
+    if (saved) {
+      try {
+        const obj = JSON.parse(saved);
+        if (obj.lastChip) {
+          const chip = obj.lastChip;
+          setTimeout(() => setActiveChip(chip), 0);
+        }
+      } catch {}
     }
-    return null;
-  });
+  }, []);
 
   // Rotating word effect
   useEffect(() => {
